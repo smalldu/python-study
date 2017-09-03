@@ -9,6 +9,11 @@
 			Hello , {% if name %} {{ name }} {% else %} Stranger {% endif %} ! 
 		</h1>
 	</div>
+		<ul>
+			{% for item in blogs %}
+				<li>{{ item.title }} -- , --  {{ item.content }} -- , -- {{ item.create_time }}</li>
+			{% endfor %}
+		</ul>
 	{{ wtf.quick_form(form) }}
 {% endblock %}
 

@@ -148,12 +148,15 @@ app.config['SECRET_KEY'] = 'This is a secret key'
 ### 重定向和用户会话
 
  ### Flash 消息
- 
+
+
+flask mysql
+http://blog.csdn.net/yangdi1206/article/details/70131606 
 
 
 
 
-
+mysql的url为：mysql://username:password@hostname/database
 
 
 
