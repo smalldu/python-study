@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*- 
 _author_ = 'Smalldu'
 
-
 from flask import Flask,session,url_for,flash
 from flask import request
 from flask import make_response
@@ -11,14 +10,12 @@ from flask import abort
 from flask import render_template
 from flask_bootstrap import Bootstrap
 
-
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import Required
 
 from flask_script import Manager
 from flask_moment import Moment
-
 
 # about mysql
 from sshtunnel import SSHTunnelForwarder
