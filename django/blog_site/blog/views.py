@@ -1,10 +1,10 @@
 from django.shortcuts import render
-from .models import Post
+from .models import Post,Comment
 from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import ListView
-from .forms import EmailPostForm
-
+from .forms import EmailPostForm,CommentForm
+from taggit.models import Tag
 
 # 暂时不对
 # class PostListView(ListView):
@@ -14,10 +14,14 @@ from .forms import EmailPostForm
 # 	tempate_name = 'blog/post/list.html'
 
 # 列表
-def post_list(request):
+def post_list(request,tag_slug=None):
 	object_list = Post.published.all()
+	tag = None
 	paginator = Paginator(object_list,3) # 每页3个元素
 	page = request.GET.get('page')
+	if tag_slug:
+		tag = get_object_or_404(Tag,slug=tag_slug)
+		object_list = object_list.filter(tags__in = [tag])
 	try:
 		posts = paginator.page(page)
 	except PageNotAnInteger:
@@ -26,7 +30,9 @@ def post_list(request):
 		posts = paginator.page(paginator.num_pages)
 	return render(request,
 				'blog/post/list.html',
-				{ 'page': page , 'posts':posts})
+				{ 'page': page , 
+				'tag':tag,
+				'posts':posts})
 
 
 # 详细页面
@@ -36,9 +42,29 @@ def post_detail(request, year, month, day, post):
                                    publish__year=year,
                                    publish__month=month,
                                    publish__day=day)
+    # List of active comments for this post
+    comments = post.comments.filter(active=True)
+    new_comment = None
+        
+    if request.method == 'POST':
+        # A comment was posted
+        comment_form = CommentForm(data=request.POST)
+        if comment_form.is_valid():
+            # Create Comment object but don't save to database yet
+            new_comment = comment_form.save(commit=False)
+            # Assign the current post to the comment
+            new_comment.post = post
+            # Save the comment to the database
+            new_comment.save()
+    else:
+        comment_form = CommentForm()
     return render(request,
                   'blog/post/detail.html',
-                  {'post': post})
+                  {'post': post,
+                  'comments': comments, 
+                  'new_comment': new_comment,
+                  'comment_form': comment_form})
+
 
 
 # 分享

@@ -4,6 +4,7 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from taggit.managers import TaggableManager
 
 # Django将会为models.py中的每一个定义的模型（model）创建一张表。当你创建好一个模型（model），
 # Django会提供一个非常实用的API来方便的查询数据库
@@ -37,6 +38,7 @@ class Post(models.Model):
     status = models.CharField(max_length=10,
                                 choices=STATUS_CHOICES,
                                 default='draft')
+    tags = TaggableManager() # 第三方
                             
     class Meta:
         # publish 进行降序  
@@ -54,6 +56,27 @@ class Post(models.Model):
             self.publish.strftime('%d'),
             self.slug
             ])
+
+
+# 评论
+class Comment(models.Model):
+	post = models.ForeignKey(Post,related_name='comments')
+	name = models.CharField(max_length=80)
+	email = models.EmailField()
+	body = models.TextField()
+	created = models.DateTimeField(auto_now_add=True)
+	updated = models.DateTimeField(auto_now=True)
+	active = models.BooleanField(default=True)
+	
+	class Meta:
+		ordering = ('created',)
+
+	def __str__(self):
+		return 'Comment by {} on {}'.format(self.name,self.post)
+
+
+
+
 
 
 

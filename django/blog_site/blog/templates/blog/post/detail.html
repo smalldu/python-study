@@ -14,4 +14,33 @@
 	    Share this post
 	  </a>
   </p>
+  {% with comments.count as total_comments %}
+    <h2>
+      {{ total_comments }} comment{{ total_comments|pluralize }}
+    </h2>
+  {% endwith %}
+  {# 评论列表 #}
+  {% for comment in comments %}
+    <div class="comment">
+      <p class="info">
+        Comment {{ forloop.counter }} by {{ comment.name }}
+        {{ comment.created }}
+      </p>
+      {{ comment.body|linebreaks }}
+    </div>
+    {% empty %}
+    <p>There is no comment yes.</p>
+  {% endfor %}
+  {# 渲染表单或者成功的信息 #}
+  {% if new_comment %}
+    <h2>评论已经成功添加！！！yeah！</h2>
+  {% else %}
+    <h2>添加一个评论吧</h2>
+    <form action="." method="post">
+      {{ comment_form.as_p }}
+      {% csrf_token %}
+      <p><input type="submit" name="添加评论"></p>
+    </form>
+  {% endif %}
+
 {% endblock %}
